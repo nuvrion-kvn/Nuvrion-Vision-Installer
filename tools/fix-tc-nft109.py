@@ -12,7 +12,7 @@ import tempfile
 
 OLD = '7bb39726a72643bf7cad65ed9d8297944391fac943f7e12a9efacfd9d5963f4a'
 NEW = '1726074533b2ef24f4be6b1039564575cbf2df304c077c51c16fe8ceb2654320'
-REVISIONS = {OLD: NEW, 'a93f6ba2198a644b0a5372de8a9fd0e073a17f2703cfb713eed758a85c14bfbd': '0abc48bbf6ffa58e187e77d95303fe9d010927143f4157f5f166f0d50bd9b9b7', '02a5afd37c4a1119ec3d47641f5204b3fddd9e65a62d887f63c864abf44db028': 'f329e9296dde568c86a42df3ff5b46318deafb2fce6c476f5496110c6bb67763'}
+REVISIONS = {OLD: NEW, 'a93f6ba2198a644b0a5372de8a9fd0e073a17f2703cfb713eed758a85c14bfbd': '0abc48bbf6ffa58e187e77d95303fe9d010927143f4157f5f166f0d50bd9b9b7', '02a5afd37c4a1119ec3d47641f5204b3fddd9e65a62d887f63c864abf44db028': 'f329e9296dde568c86a42df3ff5b46318deafb2fce6c476f5496110c6bb67763', '9c30dcd1cf7fae3d65be9440afc61cfbb7c758357abb87b98bf9f015fbc9af18': '32ef49a37554c87062f47275c8de17fae34b16ade6c60bfb732e534f6e5f5c7a'}
 BEFORE = b'                    if m["op"] in ("==", "in"):\n'
 INSERT = b'''                    # nft 1.0.9: ct state membership is a bare JSON array.
                     # Only normalize this known expression, not concatenations.
