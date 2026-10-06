@@ -42,7 +42,12 @@ def nginx_version(value):
 
 
 def validate(settings):
+    if not isinstance(settings, dict):
+        raise ValueError('Настройки должны быть объектом JSON.')
     s = dict(settings)
+    for field in ('domain', 'panel_ips', 'email'):
+        if not isinstance(s.get(field), str):
+            raise ValueError(f'Поле {field} должно быть строкой.')
     domain = s['domain'].lower().rstrip('.')
     labels = domain.split('.')
     if len(domain) > 253 or len(labels) < 2 or not all(

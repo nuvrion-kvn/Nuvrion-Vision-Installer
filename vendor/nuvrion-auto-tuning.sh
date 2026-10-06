@@ -253,9 +253,11 @@ PANEL_PORT_ENV=${NUVRION_PANEL_PORT:-}
 if [[ -n $PANEL_PORT_ENV ]]; then
     if [[ $PANEL_PORT_ENV =~ ^[0-9]{1,5}$ ]]; then
         PANEL_PORT_ENV=$((10#$PANEL_PORT_ENV))
+    else
+        PANEL_PORT_ENV=""
     fi
     if [[ ! $PANEL_PORT_ENV =~ ^[0-9]+$ ]] || (( PANEL_PORT_ENV < 1 || PANEL_PORT_ENV > 65535 )); then
-        warn "NUVRION_PANEL_PORT=${PANEL_PORT_ENV} некорректен; автоматическая настройка панели не будет использовать это значение."
+        warn "NUVRION_PANEL_PORT=${NUVRION_PANEL_PORT:-} некорректен; автоматическая настройка панели не будет использовать это значение."
         PANEL_PORT_ENV=""
     fi
 fi
@@ -2453,15 +2455,15 @@ nofile_pair_ok() {
     local pair=${1:-}
     local soft hard
 
-    [[ $pair == */* ]] || return 1
+    [[ $pair == */* && ${pair#*/} != */* ]] || return 1
     soft=${pair%%/*}
     hard=${pair##*/}
 
-    local limit
-    for limit in "$soft" "$hard"; do
-        [[ $limit == unlimited || $limit == infinity ]] && continue
-        [[ $limit =~ ^[0-9]+$ ]] || return 1
-        (( limit >= NOFILE_TARGET )) || return 1
+    local value
+    for value in "$soft" "$hard"; do
+        case "$value" in unlimited|infinity) continue ;; esac
+        [[ $value =~ ^[0-9]{1,18}$ ]] || return 1
+        (( 10#$value >= NOFILE_TARGET )) || return 1
     done
     return 0
 }

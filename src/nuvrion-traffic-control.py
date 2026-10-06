@@ -13,6 +13,7 @@ from datetime import datetime
 import fcntl
 import ipaddress
 import json
+import math
 import os
 import re
 from pathlib import Path
@@ -299,8 +300,11 @@ def networks(text):
             raise ValueError("Слишком много записей в списке.")
     if not result:
         raise ValueError("Пустой список не принимается.")
-    return [str(n) for version in (4, 6) for n in ipaddress.collapse_addresses(
+    collapsed = [n for version in (4, 6) for n in ipaddress.collapse_addresses(
         n for n in result if n.version == version)]
+    if any(n.prefixlen == 0 for n in collapsed):
+        raise ValueError("Совокупность блокировок покрывает весь IPv4 или IPv6; применение запрещено.")
+    return [str(n) for n in collapsed]
 
 
 class HTTPSOnly(urllib.request.HTTPRedirectHandler):
@@ -534,6 +538,10 @@ def load():
             not all(isinstance(state.get(k), list) for k in ("allow", "manual", "ssh_ports")) or
             not isinstance(state.get("updated"), (int, float))):
         raise ValueError("Повреждена структура конфигурации Traffic Control.")
+    updated = state['updated']
+    if (isinstance(updated, bool) or updated < 0
+            or isinstance(updated, float) and not math.isfinite(updated)):
+        raise ValueError("Некорректное время обновления конфигурации Traffic Control.")
     try:
         render(state)  # Проверка всех адресов и портов до любых изменений.
     except (TypeError, KeyError, ValueError) as exc:
@@ -555,6 +563,10 @@ def render(state, exists=False, acme=False):
         blocked.extend(ipaddress.ip_network(x, strict=False) for x in entries)
     if any(n.prefixlen == 0 for n in blocked):
         raise ValueError("Блокировка /0 запрещена.")
+    blocked = [n for version in (4, 6) for n in ipaddress.collapse_addresses(
+        n for n in blocked if n.version == version)]
+    if any(n.prefixlen == 0 for n in blocked):
+        raise ValueError("Совокупность блокировок покрывает весь IPv4 или IPv6; применение запрещено.")
     lines = [f"delete table inet {TABLE}"] if exists else []
     lines += [f"table inet {TABLE} {{"]
     for prefix, items in (("allow", allowed), ("block", blocked)):
@@ -1217,6 +1229,17 @@ def execute(args):
     if cmd == "install":
         install(args)
         return
+    # Recovery cannot depend on parsing a damaged or missing state.json.
+    if cmd == "disable":
+        disable()
+        return
+    if cmd == "rollback":
+        if (ROOT / "pending").exists():
+            disable()
+        return
+    if cmd == "restore" and (ROOT / "pending").exists():
+        disable(units=False)
+        return
     state = load()
     if cmd == "top":
         top(not args.no_resolve)
@@ -1246,16 +1269,9 @@ def execute(args):
                              "nuvrion-traffic-control activate снова.")
         finish_activation()
         ok("Включение завершено: восстановление и обновление включены.")
-    elif cmd == "rollback":
-        if (ROOT / "pending").exists():
-            disable()
     elif cmd == "restore":
-        if (ROOT / "pending").exists():
-            disable(units=False)
-        elif (ROOT / "enabled").exists():
+        if (ROOT / "enabled").exists():
             apply(state)
-    elif cmd == "disable":
-        disable()
     elif cmd == "uninstall":
         if not args.yes:
             raise ValueError("Удаление требует --yes. Списки сохранятся в " + str(ROOT))
@@ -1498,7 +1514,8 @@ def main(argv=None):
             raise ValueError("Восстановление отменено пользователем.")
         args.yes = True
     try:
-        if args.command != "check" and not (args.command == "status" and args.json):
+        if (args.command not in ("check", "disable", "rollback", "restore")
+                and not (args.command == "status" and args.json)):
             ensure_dependencies(auto_install=args.command in ("install", "repair"))
     except (ValueError, OSError, subprocess.SubprocessError) as exc:
         raise ValueError(str(exc)) from exc

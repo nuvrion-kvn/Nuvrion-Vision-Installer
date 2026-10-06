@@ -18,6 +18,15 @@ SETTINGS = dict(domain='node.example.com', panel_ips='203.0.113.10',
 
 
 class ConfigTests(unittest.TestCase):
+    def test_settings_must_be_json_object_with_string_fields(self):
+        for document in (None, [], 'invalid', 1):
+            with self.subTest(document=document), self.assertRaises(ValueError):
+                r.validate(document)
+        for field in ('domain', 'panel_ips', 'email'):
+            for value in (None, [], {}, 1, True):
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    r.validate(dict(SETTINGS, **{field:value}))
+
     def test_api_default(self):
         self.assertEqual(r.validate(SETTINGS)['node_port'], 2222)
 
