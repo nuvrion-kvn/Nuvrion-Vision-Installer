@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/nuvrion-banner.svg" alt="Nuvrion" width="100%">
+<img src="assets/nuvrion-banner.png" alt="Nuvrion Vision Installer" width="100%">
 
 # Nuvrion Vision Installer
 
