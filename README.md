@@ -15,10 +15,6 @@
 
 </div>
 
-## Первый выпуск Nuvrion
-
-Версия проекта и поставляемых скриптов — **1.0.0**. Новые имена файлов, переменных окружения и служб приведены в инструкциях ниже. Установка под новым именем не переносит настройки ранее установленного проекта автоматически. Для существующего сервера сначала проверьте службы, пути и правила firewall; новые команды рассчитаны на установку Nuvrion.
-
 ## Назначение
 
 **Nuvrion Vision Installer 1.0.0** разворачивает Remnawave-ноду на отдельном Linux-сервере: RemnaNode в Docker, Xray с VLESS TCP/RAW, TLS 1.3 и XTLS Vision, сертификат и автономный HTTPS-сайт PokéHabitat.
@@ -42,6 +38,8 @@
 <h3>Схема работы</h3>
 
 ![Схема VLESS TLS Vision и Unix-Socket Decoy](assets/vision-scheme.svg)
+
+[Открыть подробную схему в полном размере](assets/vision-scheme.svg)
 
 Внешний TCP/443 принадлежит Xray. nginx обслуживает только Unix-сокеты. API RemnaNode слушает заданный порт, но UFW разрешает доступ только исходящим IP панели. Traffic Control применяется последним отдельным слоем nftables.
 
@@ -394,6 +392,5 @@ bash /opt/remnanode/installer.sh --check
 
 **Nuvrion**  
 GitHub: **[nuvrion-kvn](https://github.com/nuvrion-kvn)**  
-Email: **[himik0011113@gmail.com](mailto:himik0011113@gmail.com)**
 
 Оригинальный код Nuvrion распространяется по лицензии [MIT](LICENSE). Источники внешних списков и общие пакеты перечислены в [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

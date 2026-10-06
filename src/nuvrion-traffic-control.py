@@ -2,7 +2,7 @@
 # Nuvrion · release 1.0.0
 """Nuvrion Traffic Control — independent host ingress blocklist manager.
 
-Автор: Nuvrion · GitHub: nuvrion-kvn · Email: himik0011113@gmail.com
+Автор: Nuvrion · GitHub: nuvrion-kvn
 Copyright (c) 2026 Nuvrion. SPDX-License-Identifier: MIT
 """
 import argparse
@@ -856,7 +856,7 @@ def brand_header():
     for value, styles in [
         ("Nuvrion · TRAFFIC CONTROL", ("cyan", "bold")),
         ("Версия " + VERSION, ("dim",)),
-        ("Nuvrion · Email: himik0011113@gmail.com", ("dim",)),
+        ("Nuvrion", ("dim",)),
         ("GitHub: nuvrion-kvn", ("dim",)),
     ]:
         for line in textwrap.wrap(value, width=inside):

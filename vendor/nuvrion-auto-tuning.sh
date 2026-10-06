@@ -6,7 +6,6 @@
 #
 # Автор и разработчик: Nuvrion
 # GitHub: nuvrion-kvn
-# Email: himik0011113@gmail.com
 #
 # Copyright (c) 2026 Nuvrion
 # SPDX-License-Identifier: MIT

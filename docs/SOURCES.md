@@ -2,7 +2,7 @@
 
 Nuvrion Vision Installer 1.0.0 включает закреплённые снимки Nuvrion Auto Tuning 1.0.0 и Nuvrion Traffic Control 1.0.0. SHA-256 каждого снимка задан в `build.py`; сборщик проверяет их перед упаковкой.
 
-Встроенные компоненты Vision Installer имеют собственные проверенные снимки; их содержимое может отличаться от самостоятельных проектов той же версии. Каждый новый репозиторий начинает отдельную историю выпуска Nuvrion.
+Встроенные компоненты Vision Installer имеют собственные проверенные снимки; их содержимое может отличаться от самостоятельных проектов той же версии.
 
 Remnawave Node загружается из `remnawave/node:latest` и после получения закрепляется по digest. Xray поставляется внутри образа ноды. Версия Xray 26.7.28 используется в интеграционных проверках CI; она не является обещанием версии будущего образа latest.
 
@@ -10,4 +10,4 @@ PokéHabitat поставляется с локальными изображен
 
 `build.py` собирает воспроизводимый автономный архив и единый `nuvrion-vision-install.sh`. Сумма самого установщика записывается в `SHA256SUMS`.
 
-Сторонние лицензии: [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md), [site/LICENSES.md](../site/LICENSES.md). Первый выпуск: [RELEASE-NOTES-1.0.0.md](RELEASE-NOTES-1.0.0.md).
+Сторонние лицензии: [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md), [site/LICENSES.md](../site/LICENSES.md). Описание версии: [RELEASE-NOTES-1.0.0.md](RELEASE-NOTES-1.0.0.md).

@@ -1,5 +1,99 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-label="Nuvrion Traffic Control — схема работы версии 1.0.0">
-<title>Nuvrion Traffic Control — схема работы версии 1.0.0</title>
-<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#08121f"/><stop offset="1" stop-color="#162540"/></linearGradient><linearGradient id="accent"><stop stop-color="#71e5d5"/><stop offset="1" stop-color="#a5a4ff"/></linearGradient><pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#a8c9e8" stroke-opacity=".045"/></pattern><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71e5d5" stroke-width="1.5"/></marker></defs>
-<rect width="1400" height="720" rx="26" fill="url(#bg)"/><rect width="1400" height="720" rx="26" fill="url(#grid)"/>
-<g font-family="Segoe UI,DejaVu Sans,Arial,sans-serif"><text x="52" y="54" font-size="18" fill="#71e5d5" font-weight="600">NUVRION  /  1.0.0</text><text x="52" y="108" font-size="37" fill="#f5f9fc" font-weight="600">Traffic Control · схема работы</text><text x="52" y="147" font-size="22" fill="#b9ccdf" font-weight="400">Исключения администратора имеют приоритет над списками блокировки</text><rect x="52" y="205" width="335" height="162" rx="16" fill="#15263b" stroke="#375069"/><text x="74" y="242" font-size="22" fill="#edf5fb" font-weight="600">Источники правил</text><text x="74" y="274" font-size="18" fill="#b9ccdf" font-weight="400">antiscanner / government_networks</text><text x="74" y="302" font-size="18" fill="#b9ccdf" font-weight="400">skipa · ручные IP / CIDR</text><text x="74" y="330" font-size="18" fill="#b9ccdf" font-weight="400">Проверка и нормализация</text><rect x="478" y="205" width="365" height="162" rx="16" fill="#163336" stroke="#71e5d5"/><text x="500" y="242" font-size="22" fill="#71e5d5" font-weight="600">Локальное состояние</text><text x="500" y="274" font-size="18" fill="#b9ccdf" font-weight="400">Исключения SSH и панели</text><text x="500" y="302" font-size="18" fill="#b9ccdf" font-weight="400">IPv4 / IPv6 · разрешённые IP</text><text x="500" y="330" font-size="18" fill="#b9ccdf" font-weight="400">Сохранение списков и настроек</text><rect x="934" y="205" width="414" height="162" rx="16" fill="#15263b" stroke="#375069"/><text x="956" y="242" font-size="22" fill="#edf5fb" font-weight="600">nftables · inet nuvrion_tc</text><text x="956" y="274" font-size="18" fill="#b9ccdf" font-weight="400">Входящие пакеты → allowlist</text><text x="956" y="302" font-size="18" fill="#b9ccdf" font-weight="400">Блок-листы → журнал / DROP</text><text x="956" y="330" font-size="18" fill="#b9ccdf" font-weight="400">Остальной трафик → далее</text><path d="M387 286H468" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><path d="M843 286H924" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="52" y="454" width="335" height="135" rx="16" fill="#15263b" stroke="#375069"/><text x="74" y="491" font-size="22" fill="#edf5fb" font-weight="600">Обновление по таймеру</text><text x="74" y="523" font-size="18" fill="#b9ccdf" font-weight="400">Загрузка всех списков</text><text x="74" y="551" font-size="18" fill="#b9ccdf" font-weight="400">Применение после проверки</text><rect x="478" y="454" width="365" height="135" rx="16" fill="#15263b" stroke="#375069"/><text x="500" y="491" font-size="22" fill="#edf5fb" font-weight="600">Перезагрузка сервера</text><text x="500" y="523" font-size="18" fill="#b9ccdf" font-weight="400">Восстановление локальных правил</text><text x="500" y="551" font-size="18" fill="#b9ccdf" font-weight="400">Сеть не нужна для restore</text><rect x="934" y="454" width="414" height="135" rx="16" fill="#15263b" stroke="#375069"/><text x="956" y="491" font-size="22" fill="#edf5fb" font-weight="600">Управление · ntc</text><text x="956" y="523" font-size="18" fill="#b9ccdf" font-weight="400">Статус · журнал · диагностика</text><text x="956" y="551" font-size="18" fill="#b9ccdf" font-weight="400">Блокировки · исключения · on/off</text><path d="M218 454V387H661V377" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><path d="M661 454V377" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><path d="M1141 454V377" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><text x="52" y="655" font-size="20" fill="#b9ccdf" font-weight="400">Совпадения определяются содержимым списков. Фильтрация не гарантирует защиту от всех сканеров.</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="2070" viewBox="0 0 1200 2070" role="img" aria-labelledby="title desc">
+<title id="title">Traffic Control</title><desc id="desc">Входящий пакет проходит проверку loopback, соединения, SSH-порта и разрешённых IP. Затем адрес из блок-листа отбрасывается. Остальное проходит к другим правилам firewall. Отдельно показаны источники, проверка и обновление nftables.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#a47a29"/></marker></defs>
+<style>text {font-family: 'Segoe UI',Arial,sans-serif} .body {fill:#475569;font-size:20px} .heading {fill:#172b40;font-size:25px;font-weight:700} .small {fill:#64748b;font-size:19px} .label {fill:#8b631e;font-size:18px;font-weight:700;letter-spacing:1.5px} .edge {fill:none;stroke:#a47a29;stroke-width:2.6;marker-end:url(#arrow);stroke-linecap:round;stroke-linejoin:round}</style>
+<rect width="1200" height="2070" fill="#fbfaf7"/><rect x="0" y="0" width="1200" height="7" fill="#c29a45"/>
+
+<text x="50" y="51" class="label">NUVRION  /  СХЕМА РАБОТЫ</text>
+<text x="50" y="107" font-size="43" fill="#172b40" font-weight="700">Traffic Control</text>
+<text x="50" y="145" class="body">Порядок обработки пакета и безопасное обновление списков</text>
+<text x="50" y="195" class="label">01  /  ВХОДЯЩИЙ ПАКЕТ: ПРАВИЛА ПРОВЕРЯЮТСЯ СВЕРХУ ВНИЗ</text>
+<path d="M50 211 H1150" stroke="#e5dfd1" stroke-width="1.5"/>
+<rect x="50" y="233" width="1100" height="117" rx="18" fill="#fff7e7" stroke="#d8bc78" stroke-width="1.6"/>
+<text x="74" y="265" class="heading">INPUT → inet nuvrion_tc → chain ingress</text>
+<text x="74" y="301" class="body">IPv4 и IPv6 · priority −10 · сам сервер и контейнеры с network_mode: host</text>
+<path class="edge" d="M 410 355 L 410 390"/>
+<rect x="50" y="399" width="710" height="110" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="431" class="heading">1. Loopback или established / related?</text>
+<text x="74" y="467" class="body">Локальный либо уже установленный / связанный поток.</text>
+<rect x="50" y="552" width="710" height="110" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="584" class="heading">2. TCP-порт входит в список SSH?</text>
+<text x="74" y="620" class="body">Настроенные SSH-порты исключены для всех адресов.</text>
+<rect x="50" y="705" width="710" height="110" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="737" class="heading">3. IP находится в allow4 / allow6?</text>
+<text x="74" y="773" class="body">Исключения администратора, панели и добавленных IP.</text>
+<rect x="815" y="399" width="335" height="416" rx="18" fill="#eef8f3" stroke="#adcebd" stroke-width="1.6"/>
+<text x="839" y="431" class="heading">Пропустить этот слой</text>
+<text x="839" y="467" class="body">При совпадении: return.</text>
+<text x="839" y="498" class="body">Ограничения UFW, Fail2ban и</text>
+<text x="839" y="524" class="body">других таблиц продолжают</text>
+<text x="839" y="550" class="body">действовать.</text>
+<text x="839" y="581" class="body">Это не безусловное</text>
+<text x="839" y="607" class="body">разрешение доступа.</text>
+<path class="edge" d="M 764 454 L 806 454"/>
+<text x="772" y="442" class="small">да</text>
+<path class="edge" d="M 764 607 L 806 607"/>
+<text x="772" y="595" class="small">да</text>
+<path class="edge" d="M 764 760 L 806 760"/>
+<text x="772" y="748" class="small">да</text>
+<path class="edge" d="M 410 513 L 410 543"/>
+<text x="425" y="535" class="small">нет</text>
+<path class="edge" d="M 410 666 L 410 696"/>
+<text x="425" y="688" class="small">нет</text>
+<path class="edge" d="M 410 819 L 410 858"/>
+<text x="425" y="845" class="small">нет</text>
+<rect x="50" y="867" width="710" height="110" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="899" class="heading">4. IP находится в block4 / block6?</text>
+<text x="74" y="935" class="body">Объединённые внешние списки и ручные IP/CIDR.</text>
+<rect x="815" y="867" width="335" height="189" rx="18" fill="#fff2ef" stroke="#dcb2a8" stroke-width="1.6"/>
+<text x="839" y="899" class="heading">Заблокировать</text>
+<text x="839" y="935" class="body">counter + drop.</text>
+<text x="839" y="966" class="body">Если включено логирование:</text>
+<text x="839" y="992" class="body">NVTC4 / NVTC6, с</text>
+<text x="839" y="1018" class="body">ограничением частоты.</text>
+<path class="edge" d="M 764 922 L 806 922"/>
+<text x="772" y="910" class="small">да</text>
+<path class="edge" d="M 410 981 L 410 1019"/>
+<text x="425" y="1008" class="small">нет</text>
+<rect x="50" y="1028" width="710" height="116" rx="18" fill="#eef8f3" stroke="#adcebd" stroke-width="1.6"/>
+<text x="74" y="1060" class="heading">Совпадений нет → policy accept</text>
+<text x="74" y="1096" class="body">Пакет продолжает обработку другими правилами firewall.</text>
+<text x="50" y="1209" class="label">02  /  ЦИКЛ ОБНОВЛЕНИЯ И ВОССТАНОВЛЕНИЯ</text>
+<path d="M50 1225 H1150" stroke="#e5dfd1" stroke-width="1.5"/>
+<rect x="50" y="1248" width="530" height="209" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="1280" class="label">СПИСКИ</text>
+<text x="74" y="1312" class="heading">Получить адреса</text>
+<text x="74" y="1348" class="body">Источники: antiscanner, government_networks, skipa.</text>
+<text x="74" y="1379" class="body">Ручные блокировки и отдельные разрешённые IP</text>
+<text x="74" y="1405" class="body">хранятся в конфигурации.</text>
+<rect x="620" y="1248" width="530" height="209" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="1280" class="label">КОНТРОЛЬ</text>
+<text x="644" y="1312" class="heading">Проверить списки</text>
+<text x="644" y="1348" class="body">Валидация IP/CIDR, нормализация и объединение</text>
+<text x="644" y="1374" class="body">диапазонов; запрет /0.</text>
+<text x="644" y="1405" class="body">Сгенерировать наборы; проверить синтаксис через</text>
+<text x="644" y="1431" class="body">nft -c.</text>
+<path class="edge" d="M 584 1350 L 611 1350"/>
+<path class="edge" d="M 885 1461 L 885 1497"/>
+<rect x="50" y="1506" width="1100" height="162" rx="18" fill="#fff7e7" stroke="#d8bc78" stroke-width="1.6"/>
+<text x="74" y="1538" class="heading">Применить транзакцией и сохранить состояние</text>
+<text x="74" y="1574" class="body">При включённой фильтрации заменяется собственная таблица; чужие таблицы не очищаются.</text>
+<text x="74" y="1605" class="body">Сбой источника сохраняет прежние списки. При ошибке сохранения активного состояния возвращаются</text>
+<text x="74" y="1631" class="body">прежние правила.</text>
+<path class="edge" d="M 600 1673 L 600 1710"/>
+<rect x="50" y="1719" width="530" height="200" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="1751" class="heading">Автоматизация systemd</text>
+<text x="74" y="1787" class="body">Восстановление после загрузки сервера.</text>
+<text x="74" y="1818" class="body">Обновление: через 15 минут после boot, затем раз</text>
+<text x="74" y="1844" class="body">в сутки; задержка до 30 минут.</text>
+<rect x="620" y="1719" width="530" height="200" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="1751" class="heading">Управление и наблюдение</text>
+<text x="644" y="1787" class="body">ntc s / c / r: состояние, проверки, правила; ntc l / t:</text>
+<text x="644" y="1813" class="body">журнал и статистика.</text>
+<text x="644" y="1844" class="body">ntc u: списки; ntc on / off: включение и отключение</text>
+<text x="644" y="1870" class="body">собственного слоя.</text>
+<path d="M50 1956 H1150" stroke="#d7c8a4" stroke-width="1.5"/>
+<text x="50" y="1981" class="small">Не охватываются: FORWARD, OUTPUT и контейнеры Docker bridge. Это фильтр по спискам IP.</text>
+<text x="50" y="2009" class="small">Таймер обновляет списки, а не программу. Внешние списки могут давать ложные блокировки.</text>
+<text x="50" y="2037" class="small">Откат незавершённого включения не проверяет доступность SSH; нужна консоль провайдера.</text>
+</svg>

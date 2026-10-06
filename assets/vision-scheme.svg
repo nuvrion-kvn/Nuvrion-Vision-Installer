@@ -1,5 +1,130 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-label="Nuvrion Vision Installer — схема работы версии 1.0.0">
-<title>Nuvrion Vision Installer — схема работы версии 1.0.0</title>
-<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#08121f"/><stop offset="1" stop-color="#162540"/></linearGradient><linearGradient id="accent"><stop stop-color="#71e5d5"/><stop offset="1" stop-color="#a5a4ff"/></linearGradient><pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#a8c9e8" stroke-opacity=".045"/></pattern><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71e5d5" stroke-width="1.5"/></marker></defs>
-<rect width="1400" height="720" rx="26" fill="url(#bg)"/><rect width="1400" height="720" rx="26" fill="url(#grid)"/>
-<g font-family="Segoe UI,DejaVu Sans,Arial,sans-serif"><text x="52" y="54" font-size="18" fill="#71e5d5" font-weight="600">NUVRION  /  1.0.0</text><text x="52" y="108" font-size="37" fill="#f5f9fc" font-weight="600">Vision Installer · схема работы</text><text x="52" y="147" font-size="22" fill="#b9ccdf" font-weight="400">Единственный внешний TCP/443 → Xray → VPN или обычный HTTPS</text><rect x="52" y="215" width="245" height="152" rx="16" fill="#15263b" stroke="#375069"/><text x="74" y="252" font-size="22" fill="#edf5fb" font-weight="600">Клиент</text><text x="74" y="284" font-size="18" fill="#b9ccdf" font-weight="400">VPN: VLESS + Vision</text><text x="74" y="312" font-size="18" fill="#b9ccdf" font-weight="400">Браузер: HTTPS</text><rect x="375" y="215" width="275" height="152" rx="16" fill="#163336" stroke="#71e5d5"/><text x="397" y="252" font-size="22" fill="#71e5d5" font-weight="600">Xray · TCP/443</text><text x="397" y="284" font-size="18" fill="#b9ccdf" font-weight="400">TLS 1.3 · сертификат</text><text x="397" y="312" font-size="18" fill="#b9ccdf" font-weight="400">Разбор подключения</text><rect x="765" y="190" width="583" height="95" rx="16" fill="#15263b" stroke="#375069"/><text x="787" y="227" font-size="22" fill="#edf5fb" font-weight="600">VPN-подключение</text><text x="787" y="259" font-size="18" fill="#b9ccdf" font-weight="400">Валидный VLESS → маршрутизация Xray</text><rect x="765" y="342" width="583" height="115" rx="16" fill="#15263b" stroke="#375069"/><text x="787" y="379" font-size="22" fill="#edf5fb" font-weight="600">Обычный HTTPS · nginx</text><text x="787" y="411" font-size="18" fill="#b9ccdf" font-weight="400">HTTP/1.1 → h1.sock  /  HTTP/2 → h2.sock</text><text x="787" y="439" font-size="18" fill="#b9ccdf" font-weight="400">Изолированная служба; без TCP-listener</text><path d="M297 286H365" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><path d="M650 255H713V238H755" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><path d="M650 310H713V400H755" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="765" y="522" width="583" height="102" rx="16" fill="#15263b" stroke="#375069"/><text x="787" y="559" font-size="22" fill="#edf5fb" font-weight="600">PokéHabitat · на той же ноде</text><text x="787" y="591" font-size="18" fill="#b9ccdf" font-weight="400">Статические файлы + локальный API + SQLite</text><path d="M1057 457V512" fill="none" stroke="#71e5d5" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="52" y="450" width="598" height="174" rx="16" fill="#15263b" stroke="#375069"/><text x="74" y="487" font-size="22" fill="#edf5fb" font-weight="600">Подготовка и обслуживание</text><text x="74" y="519" font-size="18" fill="#b9ccdf" font-weight="400">Remnawave Node в Docker · профиль для панели</text><text x="74" y="547" font-size="18" fill="#b9ccdf" font-weight="400">Auto Tuning · защита API · Traffic Control по выбору</text><text x="74" y="575" font-size="18" fill="#b9ccdf" font-weight="400">Let’s Encrypt · хуки и автоматическое продление</text><text x="52" y="675" font-size="20" fill="#b9ccdf" font-weight="400">Сначала подготовка сервера, затем применение TLS-профиля в панели и итоговая проверка.</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="2810" viewBox="0 0 1200 2810" role="img" aria-labelledby="title desc">
+<title id="title">Vision Installer</title><desc id="desc">Последовательная подготовка выделенного Linux-сервера. Панель управляет RemnaNode по ограниченному API; Xray принимает TLS/443, разделяя VLESS и HTTPS fallback. nginx и игровой сервер используют Unix-сокеты, прогресс хранится в SQLite. ACME временно использует TCP/80.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#a47a29"/></marker></defs>
+<style>text {font-family: 'Segoe UI',Arial,sans-serif} .body {fill:#475569;font-size:20px} .heading {fill:#172b40;font-size:25px;font-weight:700} .small {fill:#64748b;font-size:19px} .label {fill:#8b631e;font-size:18px;font-weight:700;letter-spacing:1.5px} .edge {fill:none;stroke:#a47a29;stroke-width:2.6;marker-end:url(#arrow);stroke-linecap:round;stroke-linejoin:round}</style>
+<rect width="1200" height="2810" fill="#fbfaf7"/><rect x="0" y="0" width="1200" height="7" fill="#c29a45"/>
+
+<text x="50" y="51" class="label">NUVRION  /  СХЕМА РАБОТЫ</text>
+<text x="50" y="107" font-size="43" fill="#172b40" font-weight="700">Vision Installer</text>
+<text x="50" y="145" class="body">Установка ноды, сетевые маршруты и обслуживание сертификата</text>
+<text x="50" y="195" class="label">01  /  УСТАНОВКА НА ЧИСТОМ ВЫДЕЛЕННОМ СЕРВЕРЕ</text>
+<path d="M50 211 H1150" stroke="#e5dfd1" stroke-width="1.5"/>
+<rect x="50" y="232" width="530" height="203" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="264" class="label">01–02</text>
+<text x="74" y="296" class="heading">Проверить и подготовить</text>
+<text x="74" y="332" class="body">Root, systemd, ОС/архитектура, APT, DNS, диск,</text>
+<text x="74" y="358" class="body">свободные порты и SSH.</text>
+<text x="74" y="389" class="body">Ввести домен, API-порт, IP панели, данные ACME и</text>
+<text x="74" y="415" class="body">SECRET_KEY; показать план.</text>
+<rect x="620" y="232" width="530" height="203" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="264" class="label">03–04</text>
+<text x="644" y="296" class="heading">Записать проект и установить</text>
+<text x="644" y="332" class="body">Docker, закрепление образа ноды по digest, nginx и</text>
+<text x="644" y="358" class="body">локальный PokéHabitat.</text>
+<text x="644" y="389" class="body">Атомарная запись /opt/remnanode с менеджером и</text>
+<text x="644" y="415" class="body">отметкой подготовки.</text>
+<path class="edge" d="M 584 333 L 611 333"/>
+<path class="edge" d="M 885 439 L 885 469"/>
+<rect x="620" y="478" width="530" height="245" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="510" class="label">05–07</text>
+<text x="644" y="542" class="heading">Защитить и запустить</text>
+<text x="644" y="578" class="body">Auto Tuning: сеть, ZRAM, лимиты; UFW до API, SSH и</text>
+<text x="644" y="604" class="body">Fail2ban.</text>
+<text x="644" y="635" class="body">API разрешён только IP панели; проверка обоих</text>
+<text x="644" y="661" class="body">семейств. Запуск RemnaNode.</text>
+<text x="644" y="692" class="body">Защита от входящих ping/timestamp-проб.</text>
+<rect x="50" y="478" width="530" height="245" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="510" class="label">08–ИТОГ</text>
+<text x="74" y="542" class="heading">Сертификат и итоговая проверка</text>
+<text x="74" y="578" class="body">ACME, домен, dry-run продления; закрыть TCP/80.</text>
+<text x="74" y="609" class="body">Traffic Control — последним, по согласию.</text>
+<text x="74" y="635" class="body">Проверить компоненты и выдать профиль.</text>
+<text x="74" y="666" class="body">Применить профиль TLS/443 в панели.</text>
+<path class="edge" d="M 616 590 L 589 590"/>
+<rect x="50" y="745" width="1100" height="138" rx="18" fill="#fff7e7" stroke="#d8bc78" stroke-width="1.6"/>
+<text x="74" y="777" class="heading">Управление установленной нодой</text>
+<text x="74" y="813" class="body">/opt/remnanode/installer.sh --resume или --check; после завершения — проверки без новой установки.</text>
+<text x="74" y="844" class="body">Код 0: локальные проверки пройдены · код 2: ожидание профиля TLS/443 · код 1: ошибка.</text>
+<text x="50" y="949" class="label">02  /  ПОДКЛЮЧЕНИЯ И МАРШРУТЫ ПОСЛЕ ПРИМЕНЕНИЯ ПРОФИЛЯ</text>
+<path d="M50 965 H1150" stroke="#e5dfd1" stroke-width="1.5"/>
+<rect x="50" y="987" width="530" height="144" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="1019" class="heading">Клиенты из интернета</text>
+<text x="74" y="1055" class="body">VLESS-клиент либо обычный HTTPS-браузер.</text>
+<text x="74" y="1086" class="body">Оба обращаются к домену на TCP/443.</text>
+<rect x="620" y="987" width="530" height="144" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="1019" class="heading">Панель Remnawave</text>
+<text x="644" y="1055" class="body">Управление нодой по API; адреса панели заранее</text>
+<text x="644" y="1081" class="body">заданы в UFW и исключениях TC.</text>
+<path class="edge" d="M 315 1135 L 315 1170"/>
+<path class="edge" d="M 885 1135 L 885 1170"/>
+<rect x="50" y="1179" width="530" height="169" rx="18" fill="#fff7e7" stroke="#d8bc78" stroke-width="1.6"/>
+<text x="74" y="1211" class="heading">UFW + дополнительные слои</text>
+<text x="74" y="1247" class="body">HTTPS/VLESS: разрешён TCP/443.</text>
+<text x="74" y="1278" class="body">Traffic Control, если установлен: фильтрует новые</text>
+<text x="74" y="1304" class="body">входящие IP по спискам.</text>
+<rect x="620" y="1179" width="530" height="169" rx="18" fill="#fff7e7" stroke="#d8bc78" stroke-width="1.6"/>
+<text x="644" y="1211" class="heading">Ограниченный API RemnaNode</text>
+<text x="644" y="1247" class="body">Настраиваемый TCP-порт, обычно 2222.</text>
+<text x="644" y="1278" class="body">UFW допускает IP панели; связь панели с нодой</text>
+<text x="644" y="1304" class="body">использует mTLS.</text>
+<path class="edge" d="M 315 1352 L 315 1387"/>
+<path class="edge" d="M 885 1352 L 885 1387"/>
+<rect x="50" y="1396" width="1100" height="143" rx="18" fill="#fff7e7" stroke="#d8bc78" stroke-width="1.6"/>
+<text x="74" y="1428" class="heading">RemnaNode в Docker / host network → Xray</text>
+<text x="74" y="1464" class="body">Xray завершает TLS 1.3 на TCP/443. Профиль задаёт VLESS, XTLS Vision и HTTPS fallback.</text>
+<text x="74" y="1495" class="body">nginx не открывает публичный TCP-порт; профиль с правильными путями применяется в панели.</text>
+<path class="edge" d="M 315 1543 L 315 1580"/>
+<path class="edge" d="M 885 1543 L 885 1580"/>
+<rect x="50" y="1589" width="530" height="203" rx="18" fill="#eef8f3" stroke="#adcebd" stroke-width="1.6"/>
+<text x="74" y="1621" class="label">VPN-МАРШРУТ</text>
+<text x="74" y="1653" class="heading">Авторизованное VLESS-соединение</text>
+<text x="74" y="1689" class="body">Проверить пользователя и параметры профиля;</text>
+<text x="74" y="1715" class="body">обработать TCP/RAW + Vision.</text>
+<text x="74" y="1746" class="body">Передать трафик по настроенным</text>
+<text x="74" y="1772" class="body">outbound-правилам Xray.</text>
+<rect x="620" y="1589" width="530" height="203" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="1621" class="label">FALLBACK ПО UNIX-СОКЕТАМ</text>
+<text x="644" y="1653" class="heading">Обычный HTTPS → nginx</text>
+<text x="644" y="1689" class="body">HTTP/1.1 → h1.sock; HTTP/2 → h2.sock.</text>
+<text x="644" y="1720" class="body">Xray обращается к /run/xray-fallback; на хосте сокеты</text>
+<text x="644" y="1746" class="body">находятся в /opt/remnanode/fallback-sockets.</text>
+<path class="edge" d="M 885 1796 L 885 1833"/>
+<rect x="50" y="1842" width="530" height="180" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="1874" class="heading">Статика PokéHabitat</text>
+<text x="74" y="1910" class="body">nginx отдаёт /var/www/decoy: интерфейс, атлас и</text>
+<text x="74" y="1936" class="body">локальные изображения.</text>
+<text x="74" y="1967" class="body">Доступны и при остановленном игровом API.</text>
+<rect x="620" y="1842" width="530" height="180" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="1874" class="heading">/api/game/ → локальный сервер</text>
+<text x="644" y="1910" class="body">nginx проксирует запрос по Unix-сокету</text>
+<text x="644" y="1936" class="body">/run/nuvrion-pokehabitat/game.sock.</text>
+<text x="644" y="1967" class="body">Игровой сервис обслуживает аккаунты, бои и</text>
+<text x="644" y="1993" class="body">прогресс.</text>
+<path class="edge" d="M 875 1811 L 315 1811 L 315 1833"/>
+<path class="edge" d="M 885 2026 L 885 2063"/>
+<rect x="50" y="2072" width="1100" height="152" rx="18" fill="#eef8f3" stroke="#adcebd" stroke-width="1.6"/>
+<text x="74" y="2104" class="heading">SQLite и локальный секрет этой ноды</text>
+<text x="74" y="2140" class="body">База: /var/lib/nuvrion-pokehabitat/game.sqlite; секрет: /etc/nuvrion-pokehabitat.env.</text>
+<text x="74" y="2171" class="body">nginx и игровой сервис изолированы: AF_UNIX, без исходящего IP. Аккаунты разных нод не синхронизируются.</text>
+<text x="50" y="2290" class="label">03  /  СЕРТИФИКАТ И ОБСЛУЖИВАНИЕ</text>
+<path d="M50 2306 H1150" stroke="#e5dfd1" stroke-width="1.5"/>
+<rect x="50" y="2329" width="530" height="230" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="74" y="2361" class="heading">ACME и certbot.timer</text>
+<text x="74" y="2397" class="body">На время проверки открыть TCP/80 и подготовить</text>
+<text x="74" y="2423" class="body">правила firewall.</text>
+<text x="74" y="2454" class="body">После ACME закрыть TCP/80 и восстановить</text>
+<text x="74" y="2480" class="body">правила; deploy-hook обновляет сертификат ноды.</text>
+<text x="74" y="2511" class="body">Продление требует связи с ACME.</text>
+<rect x="620" y="2329" width="530" height="230" rx="18" fill="#ffffff" stroke="#deded8" stroke-width="1.6"/>
+<text x="644" y="2361" class="heading">Проверка компонентов</text>
+<text x="644" y="2397" class="body">Контейнер, Xray, TLS, оба Unix-сокета, игровой API,</text>
+<text x="644" y="2423" class="body">firewall и службы.</text>
+<text x="644" y="2454" class="body">Профиль и Host-параметры — в итоговом отчёте;</text>
+<text x="644" y="2480" class="body">состояние ноды — в панели.</text>
+<text x="644" y="2511" class="body">Диагностика не выводит SECRET_KEY.</text>
+<path d="M50 2599 H1150" stroke="#d7c8a4" stroke-width="1.5"/>
+<text x="50" y="2624" class="small">SSH использует отдельный настроенный порт. API ограничен IP панели; TCP/80 нужен временно для ACME.</text>
+<text x="50" y="2652" class="small">Во время установки нужен интернет для APT, Docker, Node.js и сертификата; игра размещается на ноде.</text>
+<text x="50" y="2680" class="small">Новая установка поверх существующей ноды запрещена; --resume не обновляет прежние версии.</text>
+<text x="50" y="2708" class="small">База и локальный секрет сохраняются вместе при резервном копировании.</text>
+</svg>

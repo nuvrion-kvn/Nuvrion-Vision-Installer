@@ -4,7 +4,6 @@
 # Nuvrion Vision Installer
 # Автор и разработчик: Nuvrion
 # GitHub: nuvrion-kvn
-# Email: himik0011113@gmail.com
 # Copyright (c) 2026 Nuvrion
 # SPDX-License-Identifier: MIT
 # ==============================================================================
@@ -55,7 +54,7 @@ banner() {
     step "Nuvrion · VISION / $NUVRION_VERSION"
     say '  Установка и настройка VPN-ноды'
     say '  Автор и разработчик: Nuvrion'
-    say '  GitHub: nuvrion-kvn · Email: himik0011113@gmail.com'
+    say '  GitHub: nuvrion-kvn'
     say ''
     say '  ◆ RemnaNode для подключения к панели Remnawave'
     say '  ◆ VLESS с TLS 1.3 и режимом Vision'
