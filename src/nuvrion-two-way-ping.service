@@ -1,0 +1,25 @@
+[Unit]
+Description=Nuvrion: защита от входящих Two-Way Ping запросов
+Documentation=https://github.com/nuvrion-kvn/Nuvrion-Vision-Installer
+DefaultDependencies=no
+Wants=network-pre.target
+Before=network-pre.target shutdown.target
+After=nftables.service ufw.service
+Conflicts=shutdown.target
+ConditionFileIsExecutable=/usr/local/sbin/nuvrion-two-way-ping.sh
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=CAP_NET_ADMIN
+RestrictAddressFamilies=AF_NETLINK
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ExecStart=/usr/local/sbin/nuvrion-two-way-ping.sh start
+ExecReload=/usr/local/sbin/nuvrion-two-way-ping.sh restart
+ExecStop=/usr/local/sbin/nuvrion-two-way-ping.sh stop
+
+[Install]
+WantedBy=multi-user.target

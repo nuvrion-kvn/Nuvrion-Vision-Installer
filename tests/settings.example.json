@@ -1,0 +1,6 @@
+{
+  "domain": "node.example.com",
+  "node_port": 2222,
+  "panel_ips": "203.0.113.10",
+  "email": "operator@example.com"
+}

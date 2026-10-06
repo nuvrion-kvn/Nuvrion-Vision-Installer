@@ -1,0 +1,38 @@
+[Unit]
+Description=Nuvrion Unix-Socket Decoy
+After=local-fs.target nuvrion-pokehabitat.service
+Wants=nuvrion-pokehabitat.service
+Before=docker.service
+
+[Service]
+Type=forking
+PIDFile=/run/nuvrion-nginx/nginx.pid
+RuntimeDirectory=nuvrion-nginx
+RuntimeDirectoryMode=0755
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+ReadWritePaths=/opt/remnanode/fallback-sockets /run/nuvrion-nginx /var/log/nginx
+ExecStartPre=/usr/bin/install -d -m 0755 /opt/remnanode/fallback-sockets
+ExecStartPre=/usr/sbin/nginx -t -c /opt/remnanode/nginx.conf
+ExecStart=/usr/sbin/nginx -c /opt/remnanode/nginx.conf
+ExecStartPost=/usr/bin/chown root:root /opt/remnanode/fallback-sockets/h1.sock /opt/remnanode/fallback-sockets/h2.sock
+ExecStartPost=/usr/bin/chmod 0660 /opt/remnanode/fallback-sockets/h1.sock /opt/remnanode/fallback-sockets/h2.sock
+ExecReload=/usr/sbin/nginx -s reload -c /opt/remnanode/nginx.conf
+ExecStop=/bin/kill -s QUIT $MAINPID
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

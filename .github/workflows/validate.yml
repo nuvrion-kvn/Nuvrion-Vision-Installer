@@ -1,0 +1,121 @@
+name: Проверка установщика
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+
+      - name: Воспроизводимая сборка автономного сайта
+        run: |
+          npm install --global pnpm@11.25.0
+          pnpm --dir site install --frozen-lockfile --ignore-scripts
+          cp -a site/dist /tmp/pokehabitat-client.before
+          cp -a site/server/dist /tmp/pokehabitat-server.before
+          node site/build-client.mjs
+          node site/build-server.mjs
+          diff -rq /tmp/pokehabitat-client.before site/dist
+          diff -rq /tmp/pokehabitat-server.before site/server/dist
+
+      - name: Игровые проверки с запрещённой внешней сетью
+        run: |
+          sudo systemd-run --wait --pipe --collect \
+            --property=RestrictAddressFamilies=AF_UNIX --property=IPAddressDeny=any \
+            --working-directory="$GITHUB_WORKSPACE" \
+            "$(command -v node)" tests/game_integration.mjs
+
+      - name: Проверка Python-тестов
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Воспроизводимая сборка
+        run: |
+          cp nuvrion-vision-install.sh /tmp/installer.before
+          cp SHA256SUMS /tmp/SHA256SUMS.before
+          python3 build.py
+          cmp /tmp/installer.before nuvrion-vision-install.sh
+          cmp /tmp/SHA256SUMS.before SHA256SUMS
+
+      - name: Проверка Bash и SHA-256
+        run: |
+          bash -n src/installer.sh
+          bash -n nuvrion-vision-install.sh
+          sha256sum -c SHA256SUMS
+
+      - name: Установка ShellCheck и nginx
+        run: sudo apt-get update && sudo apt-get install -y shellcheck nginx
+
+      - name: Проверка ShellCheck
+        run: |
+          shellcheck -S style src/*.sh vendor/nuvrion-auto-tuning.sh nuvrion-vision-install.sh
+
+      - name: Автономный сайт, локальный API и Unix-сокеты nginx
+        run: python3 tests/proxy_integration.py /usr/sbin/nginx /etc/nginx/mime.types
+
+      - name: Получение закреплённого Xray для интеграционных проверок
+        run: |
+          mkdir -p /tmp/vision-xray
+          curl --proto '=https' --tlsv1.2 -fsSL --retry 3 --connect-timeout 15 --max-time 120 \
+            https://github.com/XTLS/Xray-core/releases/download/v26.7.28/Xray-linux-64.zip \
+            -o /tmp/vision-xray.zip
+          echo '8195d909f1109b8f3d99eefe401a3c451d7bf4af71f24d3815420f77e5dd2a40  /tmp/vision-xray.zip' | sha256sum -c -
+          unzip -q /tmp/vision-xray.zip -d /tmp/vision-xray
+          chmod +x /tmp/vision-xray/xray
+
+      - name: Проверка Xray, TLS Vision и h1/h2 fallback
+        run: |
+          python3 tests/verify_xray.py /tmp/vision-xray/xray
+          python3 tests/integration.py /tmp/vision-xray/xray /usr/sbin/nginx /etc/nginx/mime.types
+
+  release:
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: vision-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Публикация проверенной версии
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(bash ./nuvrion-vision-install.sh --version)
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          tag="v$version"
+          notes="docs/RELEASE-NOTES-$version.md"
+          [[ -f "$notes" ]]
+          sha256sum -c SHA256SUMS
+          if gh release view "$tag" >/dev/null 2>&1; then
+            if [[ "$COMMIT_MESSAGE" != *"[обновить-выпуск]"* ]]; then
+              echo "Выпуск $tag уже существует; для его контролируемого обновления нужен маркер commit"
+              exit 0
+            fi
+            git tag -f "$tag" "$GITHUB_SHA"
+            git push --force origin "refs/tags/$tag"
+            gh release edit "$tag" --title "Nuvrion Vision Installer $version" \
+              --notes-file "$notes"
+            gh release upload "$tag" --clobber nuvrion-vision-install.sh SHA256SUMS
+            echo "Выпуск $tag обновлён после успешной проверки"
+            exit 0
+          fi
+          gh release create "$tag" --target "$GITHUB_SHA" \
+            --title "Nuvrion Vision Installer $version" --notes-file "$notes" \
+            nuvrion-vision-install.sh SHA256SUMS

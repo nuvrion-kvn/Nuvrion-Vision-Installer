@@ -1,0 +1,10 @@
+[Unit]
+Description=Nuvrion ACME temporary firewall rule cleanup
+After=ufw.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/remnanode/acme-firewall.sh close
+
+[Install]
+WantedBy=multi-user.target

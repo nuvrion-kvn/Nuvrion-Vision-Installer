@@ -1,0 +1,41 @@
+[Unit]
+Description=Nuvrion autonomous PokeHabitat game
+After=local-fs.target
+Before=nuvrion-decoy.service
+
+[Service]
+Type=simple
+User=nuvrion-game
+Group=www-data
+EnvironmentFile=/etc/nuvrion-pokehabitat.env
+Environment=GAME_DB=/var/lib/nuvrion-pokehabitat/game.sqlite
+Environment=GAME_SOCKET=/run/nuvrion-pokehabitat/game.sock
+Environment=NODE_OPTIONS=--max-old-space-size=128
+ExecStart=/opt/nuvrion-node/bin/node /usr/local/lib/nuvrion-pokehabitat/server.mjs
+RuntimeDirectory=nuvrion-pokehabitat
+RuntimeDirectoryMode=0750
+StateDirectory=nuvrion-pokehabitat
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+ReadWritePaths=/var/lib/nuvrion-pokehabitat /run/nuvrion-pokehabitat
+TasksMax=64
+MemoryMax=256M
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target
