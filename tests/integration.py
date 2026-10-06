@@ -56,7 +56,7 @@ def ready(p):
 
 def main():
     processes=[]
-    with tempfile.TemporaryDirectory(prefix='cbv-') as directory:
+    with tempfile.TemporaryDirectory(prefix='nuvrion-') as directory:
         d=Path(directory);d.chmod(0o755)
         (d/'logs').mkdir()
         run('openssl','req','-x509','-newkey','rsa:2048','-nodes','-days','2',

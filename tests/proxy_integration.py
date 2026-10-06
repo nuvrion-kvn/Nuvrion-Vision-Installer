@@ -25,7 +25,7 @@ def check(value,message):
     checks+=1;print('PASS '+message,flush=True)
 
 def main():
-    with tempfile.TemporaryDirectory(prefix='cbv-local-site-') as td:
+    with tempfile.TemporaryDirectory(prefix='nuvrion-local-site-') as td:
         d=Path(td);d.chmod(0o755);(d/'run').mkdir();shutil.copytree(ROOT/'site/dist',d/'public')
         fixture=GameFixture(d,TCP);proc=None
         try:

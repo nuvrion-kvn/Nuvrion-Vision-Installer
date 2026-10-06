@@ -1,6 +1,5 @@
 """Recovery and filtering regressions; nftables and services are never changed."""
 import importlib.util
-import io
 import json
 from argparse import Namespace
 from pathlib import Path

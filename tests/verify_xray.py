@@ -16,7 +16,7 @@ import runtime
 def main():
     binary=Path(sys.argv[1]).resolve()
     env=dict(os.environ,XRAY_LOCATION_ASSET=str(binary.parent))
-    with tempfile.TemporaryDirectory(prefix='cbv-flow-') as td:
+    with tempfile.TemporaryDirectory(prefix='nuvrion-flow-') as td:
         p=Path(td)
         subprocess.run(['openssl','req','-x509','-newkey','rsa:2048','-nodes','-days','1',
                         '-keyout',str(p/'key.pem'),'-out',str(p/'cert.pem'),'-subj','/CN=node.example.com'],
